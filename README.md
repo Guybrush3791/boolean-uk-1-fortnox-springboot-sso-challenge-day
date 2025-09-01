@@ -1,7 +1,7 @@
 # Challenge day
 
 ## Repository
-https://github.com/Guybrush3791/boolean-uk-1-fortnox-springboot-sso-protected-res.git
+https://github.com/Guybrush3791/boolean-uk-1-fortnox-springboot-sso-challenge-day.git
 
 ## Learning Objectives
 
@@ -19,7 +19,11 @@ https://github.com/Guybrush3791/boolean-uk-1-fortnox-springboot-sso-protected-re
 
 ## Activities
 ### Core
-##### Entities
+#### Authentication
+*IdP* is internal self-hosted *Keycloak* with dedicated *realm*
+
+**Realm name** `booleanuk-sso-challenge-day`
+#### Entities
 The reality is an *e‑commerce order flow* where a `Customer` places `Orders` that contain `Products`.
 
 ```mermaid
@@ -46,22 +50,22 @@ erDiagram
   ORDERS }o--o{ PRODUCT : contains
 ```
 
-##### Database Seeding
+#### Database Seeding
 Once you created database through *Hibernate*, start seeding table either through *flyway*, *SQL query* or *Hibernate* in order to have at least:
 - 5 `Products`
 - 3 `Customer`
 - 3 `Orders` made by 2 different `Customers`
 
-##### API
+#### API
 Give to the user the following *API* end-points
 
-###### Public
+##### Public
 - **GET** all `Products`
 - **GET** `Product` by id
 - **CREATE** new `Order`
 - **CHANGE** an `Order`
 
-###### Private
+##### Private
 - complete CRUD on `Customer`
 - complete CRUD on `Order`
 - complete CRUD on `Product`
@@ -69,13 +73,8 @@ Give to the user the following *API* end-points
 - **GET** product along with number of sell
 - **GET** all orders with full value, ordered by value
 
-###### OpenAPI
+##### OpenAPI
 Provide the *OpenAPI* documentation for each end point implemented
-
-##### Authentication
-*IdP* is internal self-hosted *Keycloak* with dedicated *realm*
-
-**Realm name** `booleanuk-sso-challenge-day`
 
 ### Extension
 
