@@ -1,0 +1,495 @@
+openapi: 3.0.3
+info:
+  title: Fortnox SSO Challenge – E-commerce API
+  version: 1.0.0
+  description: >
+    Public endpoints are open. Private endpoints require a Bearer JWT (Keycloak).
+servers:
+  - url: http://localhost:4000
+
+tags:
+  - name: Public
+  - name: Customers (private)
+  - name: Products (private)
+  - name: Orders (private)
+  - name: Reports (private)
+
+paths:
+
+  /api/public/products:
+    get:
+      tags: [Public]
+      summary: Get all products (public)
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ProductResponseDto' }
+
+  /api/public/products/{id}:
+    get:
+      tags: [Public]
+      summary: Get product by id (public)
+      parameters:
+        - in: path
+          name: id
+          schema: { type: integer }
+          required: true
+      responses:
+        '200':
+          description: Product
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductResponseDto' }
+        '404': { description: Not found }
+
+  /api/public/orders:
+    post:
+      tags: [Public]
+      summary: Create order (public)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OrderRequestDto' }
+            examples:
+              example:
+                value: { customerId: 1, productIds: [1,5] }
+      responses:
+        '200':
+          description: Created order
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OrderResponseDto' }
+        '400': { description: Bad request }
+        '404': { description: Customer or products not found }
+
+  /api/public/orders/{id}:
+    patch:
+      tags: [Public]
+      summary: Change order (public) – add/remove products
+      parameters:
+        - in: path
+          name: id
+          schema: { type: integer }
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChangeOrderRequestDto' }
+            examples:
+              example:
+                value: { productIdsToAdd: [2], productIdsToRemove: [5] }
+      responses:
+        '200':
+          description: Updated order
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OrderResponseDto' }
+        '404': { description: Order or products not found }
+
+
+  /api/private/customers:
+    get:
+      security: [{ bearerAuth: [] }]
+      tags: [Customers (private)]
+      summary: List customers
+      responses:
+        '200':
+          description: Customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/CustomerResponseDto' }
+        '401': { description: Unauthorized }
+    post:
+      security: [{ bearerAuth: [] }]
+      tags: [Customers (private)]
+      summary: Create customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CustomerRequestDto' }
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CustomerResponseDto' }
+        '401': { description: Unauthorized }
+
+  /api/private/customers/{id}:
+    get:
+      security: [{ bearerAuth: [] }]
+      tags: [Customers (private)]
+      summary: Get customer by id
+      parameters:
+        - in: path
+          name: id
+          schema: { type: integer }
+          required: true
+      responses:
+        '200':
+          description: Customer
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CustomerResponseDto' }
+        '401': { description: Unauthorized }
+        '404': { description: Not found }
+    put:
+      security: [{ bearerAuth: [] }]
+      tags: [Customers (private)]
+      summary: Update customer
+      parameters:
+        - in: path
+          name: id
+          schema: { type: integer }
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CustomerRequestDto' }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CustomerResponseDto' }
+        '401': { description: Unauthorized }
+        '404': { description: Not found }
+    delete:
+      security: [{ bearerAuth: [] }]
+      tags: [Customers (private)]
+      summary: Delete customer
+      parameters:
+        - in: path
+          name: id
+          schema: { type: integer }
+          required: true
+      responses:
+        '204': { description: Deleted }
+        '401': { description: Unauthorized }
+        '404': { description: Not found }
+
+
+  /api/private/products:
+    get:
+      security: [{ bearerAuth: [] }]
+      tags: [Products (private)]
+      summary: List products
+      responses:
+        '200':
+          description: Products
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ProductResponseDto' }
+        '401': { description: Unauthorized }
+    post:
+      security: [{ bearerAuth: [] }]
+      tags: [Products (private)]
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProductRequestDto' }
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductResponseDto' }
+        '401': { description: Unauthorized }
+
+  /api/private/products/{id}:
+    get:
+      security: [{ bearerAuth: [] }]
+      tags: [Products (private)]
+      summary: Get product by id
+      parameters:
+        - in: path
+          name: id
+          schema: { type: integer }
+          required: true
+      responses:
+        '200':
+          description: Product
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductResponseDto' }
+        '401': { description: Unauthorized }
+        '404': { description: Not found }
+    put:
+      security: [{ bearerAuth: [] }]
+      tags: [Products (private)]
+      summary: Update product
+      parameters:
+        - in: path
+          name: id
+          schema: { type: integer }
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProductRequestDto' }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductResponseDto' }
+        '401': { description: Unauthorized }
+        '404': { description: Not found }
+    delete:
+      security: [{ bearerAuth: [] }]
+      tags: [Products (private)]
+      summary: Delete product
+      parameters:
+        - in: path
+          name: id
+          schema: { type: integer }
+          required: true
+      responses:
+        '204': { description: Deleted }
+        '401': { description: Unauthorized }
+        '404': { description: Not found }
+
+
+  /api/private/orders:
+    get:
+      security: [{ bearerAuth: [] }]
+      tags: [Orders (private)]
+      summary: List orders
+      responses:
+        '200':
+          description: Orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/OrderResponseDto' }
+        '401': { description: Unauthorized }
+    post:
+      security: [{ bearerAuth: [] }]
+      tags: [Orders (private)]
+      summary: Create order (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OrderRequestDto' }
+      responses:
+        '200':
+          description: Created order
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OrderResponseDto' }
+        '401': { description: Unauthorized }
+
+  /api/private/orders/{id}:
+    get:
+      security: [{ bearerAuth: [] }]
+      tags: [Orders (private)]
+      summary: Get order by id
+      parameters:
+        - in: path
+          name: id
+          schema: { type: integer }
+          required: true
+      responses:
+        '200':
+          description: Order
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OrderResponseDto' }
+        '401': { description: Unauthorized }
+        '404': { description: Not found }
+    patch:
+      security: [{ bearerAuth: [] }]
+      tags: [Orders (private)]
+      summary: Change order (admin) – add/remove products
+      parameters:
+        - in: path
+          name: id
+          schema: { type: integer }
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChangeOrderRequestDto' }
+      responses:
+        '200':
+          description: Updated order
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OrderResponseDto' }
+        '401': { description: Unauthorized }
+        '404': { description: Not found }
+    delete:
+      security: [{ bearerAuth: [] }]
+      tags: [Orders (private)]
+      summary: Delete order
+      parameters:
+        - in: path
+          name: id
+          schema: { type: integer }
+          required: true
+      responses:
+        '204': { description: Deleted }
+        '401': { description: Unauthorized }
+        '404': { description: Not found }
+
+
+  /api/private/reports/customers/value:
+    get:
+      security: [{ bearerAuth: [] }]
+      tags: [Reports (private)]
+      summary: Customer value (sum of order totals per customer)
+      responses:
+        '200':
+          description: Values per customer
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/CustomerValueResponseDto' }
+        '401': { description: Unauthorized }
+
+  /api/private/reports/products/sales:
+    get:
+      security: [{ bearerAuth: [] }]
+      tags: [Reports (private)]
+      summary: Product with number of sales (count of orders including product)
+      responses:
+        '200':
+          description: Sales count per product
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ProductSalesResponseDto' }
+        '401': { description: Unauthorized }
+
+  /api/private/reports/orders/by-value:
+    get:
+      security: [{ bearerAuth: [] }]
+      tags: [Reports (private)]
+      summary: Orders with full value, ordered by value (desc)
+      responses:
+        '200':
+          description: Orders by value
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/OrderValueResponseDto' }
+        '401': { description: Unauthorized }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # Product
+    ProductRequestDto:
+      type: object
+      properties:
+        name: { type: string }
+        price: { type: number, format: double }
+      required: [name, price]
+
+    ProductResponseDto:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        price: { type: number, format: double }
+      required: [id, name, price]
+
+    # Customer
+    CustomerRequestDto:
+      type: object
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+      required: [name, email]
+
+    CustomerResponseDto:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string, format: email }
+      required: [id, name, email]
+
+    # Order
+    OrderRequestDto:
+      type: object
+      properties:
+        customerId: { type: integer }
+        productIds:
+          type: array
+          items: { type: integer }
+      required: [customerId, productIds]
+
+    ChangeOrderRequestDto:
+      type: object
+      properties:
+        productIdsToAdd:
+          type: array
+          items: { type: integer }
+        productIdsToRemove:
+          type: array
+          items: { type: integer }
+
+    OrderResponseDto:
+      type: object
+      properties:
+        id: { type: integer }
+        createdAt: { type: string, format: date-time }
+        totalAmount: { type: number, format: double }
+        customer:
+          $ref: '#/components/schemas/CustomerResponseDto'
+        products:
+          type: array
+          items: { $ref: '#/components/schemas/ProductResponseDto' }
+      required: [id, createdAt, totalAmount, customer, products]
+
+    # Reports
+    CustomerValueResponseDto:
+      type: object
+      properties:
+        customerId: { type: integer }
+        customerName: { type: string }
+        totalValue: { type: number, format: double }
+      required: [customerId, customerName, totalValue]
+
+    ProductSalesResponseDto:
+      type: object
+      properties:
+        productId: { type: integer }
+        productName: { type: string }
+        unitsSold: { type: integer }
+      required: [productId, productName, unitsSold]
+
+    OrderValueResponseDto:
+      type: object
+      properties:
+        orderId: { type: integer }
+        createdAt: { type: string, format: date-time }
+        totalAmount: { type: number, format: double }
+      required: [orderId, createdAt, totalAmount]
