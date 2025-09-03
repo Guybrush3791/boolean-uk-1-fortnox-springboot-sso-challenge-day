@@ -12,6 +12,7 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepo;
 
+    // GET ALL PRODUCTS
     public List<ProductDto> getAllProducts() {
         List<Product> productList = productRepo.findAll();
 
@@ -24,13 +25,13 @@ public class ProductService {
         }).toList();
     }
 
-    // CRUD OPERATIONS
-
+    // CREATE PRODUCT
     public Product createProduct(ProductDto dto) {
         Product product = new Product(dto.getName(), dto.getPrice());
         return productRepo.save(product);
     }
 
+    // GET PRODUCT
     public ProductDto getProduct(int id) {
         Optional<Product> productOpt = productRepo.findById(id);
 
@@ -41,6 +42,7 @@ public class ProductService {
             throw new NoSuchElementException("Product not found.");
     }
 
+    // UPDATE PRODUCT
     public ProductDto updateProduct(int id, ProductDto body) {
         Optional<Product> productOptional = productRepo.findById(id);
 
@@ -53,6 +55,7 @@ public class ProductService {
             throw new NoSuchElementException("Could not find product");
     }
 
+    // DELETE PRODUCT
     public ProductDto deleteProduct(int id) {
         Optional<Product> productOptional = productRepo.findById(id);
 
@@ -64,14 +67,12 @@ public class ProductService {
             throw new NoSuchElementException("Could not find customer");
     }
 
+    // Get number of sold products per product
     public List<ProductDto> getNumberOfSoldForProduct() {
         List<Product> products = productRepo.findAll();
 
-        return products.stream()
-                .map(p -> new ProductDto(
-                        p.getName(),
-                        p.getOrderList().size()
-                )).toList();
+        return products.stream().map(p -> new ProductDto(
+                        p.getName(), p.getOrderList().size())).toList();
     }
 
 }

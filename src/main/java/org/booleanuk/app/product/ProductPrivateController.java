@@ -1,5 +1,6 @@
 package org.booleanuk.app.product;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class ProductPrivateController {
 
     // CRUD OPERATIONS //
     @PostMapping
-    public ResponseEntity<?> createProduct(@RequestBody ProductDto body) {
+    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDto body) {
         Product product = service.createProduct(body);
         return ResponseEntity.ok(product);
     }
@@ -27,7 +28,7 @@ public class ProductPrivateController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable int id, @RequestBody ProductDto body) {
+    public ResponseEntity<?> updateProduct(@PathVariable int id,@Valid @RequestBody ProductDto body) {
         ProductDto dto = service.updateProduct(id, body);
         return ResponseEntity.ok(dto);
     }
@@ -37,6 +38,8 @@ public class ProductPrivateController {
         ProductDto dto = service.deleteProduct(id);
         return ResponseEntity.ok(dto);
     }
+    // CRUD OPERATIONS END //
+
 
     @GetMapping("/getNumSold")
     public ResponseEntity<?> getNumberOfSoldByProduct() {

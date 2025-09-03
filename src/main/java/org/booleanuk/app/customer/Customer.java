@@ -22,7 +22,6 @@ public class Customer {
     private String name;
     private String email;
 
-    // Customer places many orders
     @OneToMany(mappedBy = "customer")
     private List<Order> orderList;
 

@@ -1,7 +1,5 @@
 package org.booleanuk.app.order;
 
-import org.booleanuk.app.order.Order;
-import org.booleanuk.app.order.OrderDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +37,8 @@ public class OrderPrivateController {
         OrderDto dto = service.deleteOrder(id);
         return ResponseEntity.ok(dto);
     }
+    // CRUD OPERATIONS END //
+
 
     @GetMapping("/totals")
     public ResponseEntity<?> getTotals() {

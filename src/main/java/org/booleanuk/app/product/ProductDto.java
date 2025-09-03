@@ -1,6 +1,7 @@
 package org.booleanuk.app.product;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,8 +14,11 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ProductDto {
 
+    @NotBlank(message = "Product name can not be empty")
     private String name;
+    @NotBlank(message = "Price can not be empty")
     private long price;
+
     private int sold;
     private List<OrderDto> orderDtoList;
 

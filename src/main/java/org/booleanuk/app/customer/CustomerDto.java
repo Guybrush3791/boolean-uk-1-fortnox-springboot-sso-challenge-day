@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.booleanuk.app.order.Order;
 import org.booleanuk.app.order.OrderDto;
 
 import java.util.List;
@@ -20,7 +19,9 @@ public class CustomerDto {
     @NotBlank(message = "Name cant be empty")
     @Pattern(regexp = "^[A-Za-z]+$", message = "Name must contain only letters")
     private String name;
+
     @NotBlank(message = "Email cant be empty")
+    @Pattern(regexp = "^[A-Za-z]+$", message = "Email must contain only letters")
     private String email;
 
     private List<OrderDto> orderDtoList;
@@ -36,6 +37,5 @@ public class CustomerDto {
     public static class OrderValueDto {
         private String name;
         private long total_amount;
-
     }
 }

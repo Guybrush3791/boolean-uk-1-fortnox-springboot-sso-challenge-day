@@ -28,7 +28,7 @@ public class CustomerPrivateController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable int id, @RequestBody CustomerDto body) {
+    public ResponseEntity<?> updateCustomer(@PathVariable int id, @Valid @RequestBody CustomerDto body) {
         CustomerDto dto = service.updateCustomer(id, body);
         return ResponseEntity.ok(dto);
     }
@@ -38,14 +38,13 @@ public class CustomerPrivateController {
         CustomerDto dto = service.deleteCustomer(id);
         return ResponseEntity.ok(dto);
     }
+    // END CRUD OPERATIONS //
 
-    // END ---> OTHER OPS
 
     @GetMapping("/customerSum")
     public ResponseEntity<?> getSumOfCustomerOrders() {
         List<CustomerDto.OrderValueDto> list = service.getSumOfCustomerOrders();
         return ResponseEntity.ok(list);
     }
-
 
 }

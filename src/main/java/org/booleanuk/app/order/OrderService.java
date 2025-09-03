@@ -22,7 +22,7 @@ public class OrderService {
     @Autowired
     private ProductRepository productRepo;
 
-
+    // CREATE ORDER
     public OrderDto createOrder(OrderDto dto) {
         Optional<Customer> customerOpt = customerRepo.findById(dto.getCustomer_id());
         if (customerOpt.isEmpty()) {
@@ -48,7 +48,7 @@ public class OrderService {
         return convertToDto(order);
     }
 
-    //    GET REQUEST   //
+    // GET ORDER
     public OrderDto getOrder(int id) {
         Optional<Order> orderOpt = orderRepo.findById(id);
 
@@ -61,7 +61,7 @@ public class OrderService {
         }
     }
 
-    //    PUT REQUEST FROM PUBLIC   //
+    // UPDATE ORDER, REQUEST FROM PUBLIC
     public OrderDto updateOrderPublic(int id, OrderDto dto) {
         Optional<Order> orderOpt = orderRepo.findById(id);
 
@@ -84,7 +84,7 @@ public class OrderService {
             throw new NoSuchElementException("Could not find the order to update.");
     }
 
-    //    PUT REQUEST FROM PRIVATE - ENABLE MORE SETTERS   //
+    // UPDATE ORDER, REQUEST FROM PRIVATE -> ENABLES MORE SETTERS
     public OrderDto updateOrderPrivate(int id, OrderDto dto) {
         Optional<Order> orderOpt = orderRepo.findById(id);
 
@@ -110,6 +110,7 @@ public class OrderService {
             throw new NoSuchElementException("Could not find the order to update.");
     }
 
+    // DELETE ORDER
     public OrderDto deleteOrder(int id) {
         Optional<Order> order = orderRepo.findById(id);
 
@@ -124,6 +125,7 @@ public class OrderService {
             throw new NoSuchElementException("Could not find order");
     }
 
+    // Get all orders with their total sum in a sorted order
     public List<OrderDto> getOrdersTotalSorted() {
         List<OrderDto> orderDtos = new ArrayList<>(orderRepo.findAll().stream()
                 .map(order -> {
@@ -143,7 +145,7 @@ public class OrderService {
     }
 
 
-    //    HELPER CLASS   //
+    // Converts Order to OrderDTO
     public OrderDto convertToDto(Order order) {
         CustomerDto customerDto = new CustomerDto(
                 order.getCustomer().getName(),
