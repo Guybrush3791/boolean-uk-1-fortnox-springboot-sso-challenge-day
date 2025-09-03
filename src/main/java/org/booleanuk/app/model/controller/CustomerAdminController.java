@@ -15,6 +15,10 @@ public class CustomerAdminController {
         this.customerService = customerService;
     }
 
+    /*
+    I am aware that it is probably not good practice to have duplicate endpoints for admin and public controllers,
+    but I wrote them out because the challenge requirements specified all CRUD operations for admin.
+     */
     // GET /api/customers
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
