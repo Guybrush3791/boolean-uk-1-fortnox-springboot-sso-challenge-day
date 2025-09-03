@@ -1,0 +1,645 @@
+openapi: 3.1.0
+
+info:
+  title: Shopping API
+  description: API for managing customer, orders and products records along with their orders and products
+  version: 1.0.0
+  contact:
+    name: Shopping Management System
+
+servers:
+  - url: http://localhost:4000
+
+tags:
+  - name: customers
+  - name: orders
+  - name: products
+
+paths:
+  /api/customers:
+    get:
+      tags:
+        - customers
+      summary: Get all customer
+      description: Get all customers in the system
+      operationId: getAllCustomers
+      responses:
+        '200':
+          description: Successfully retrieved all customers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllCustomers'
+    post:
+      tags:
+        - customers
+      summary: Create customer
+      description: Create a new customer
+      operationId: createCustomer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomer'
+      responses:
+        '201':
+          description: Successfully created a new customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          description: "Could not create customer, please check all required fields are correct."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+
+  /api/customers/{id}:
+    get:
+      tags:
+        - customers
+      summary: Get customer by ID
+      description: Get a specific customer by their ID
+      operationId: getCustomerById
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the customer to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved the customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          description: "No customer with that ID was found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+    put:
+      tags:
+        - customers
+      summary: Update customer
+      description: Update an existing customer
+      operationId: updateCustomer
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the customer to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomer'
+      responses:
+        '201':
+          description: Successfully updated the customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          description: "Could not update the customer, please check all required fields are correct."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: "No customer with that ID was found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+    delete:
+      tags:
+        - customers
+      summary: Delete customer
+      description: Delete a customer by ID
+      operationId: deleteCustomer
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the customer to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully deleted the customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          description: "No customer with that ID was found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+
+  /api/public/orders:
+    post:
+      tags:
+        - orders
+      summary: Create order
+      description: Create a new order
+      operationId: createCustomerOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrder'
+      responses:
+        '201':
+          description: Successfully created a new order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: "Could not create order, please check all required fields are correct."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+  /api/public/orders/{id}:
+    put:
+      tags:
+        - orders
+      summary: Update order
+      description: Update an existing order
+      operationId: updateCustomerOrder
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the order to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrder'
+      responses:
+        '201':
+          description: Successfully updated the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: "Could not update the order, please check all required fields are correct."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: "No order with that ID was found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+
+  /api/orders:
+    get:
+      tags:
+        - orders
+      summary: Get all order
+      description: Get all orders in the system
+      operationId: getAllOrders
+      responses:
+        '200':
+          description: Successfully retrieved all orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllOrders'
+    post:
+      tags:
+        - orders
+      summary: Create order
+      description: Create a new order
+      operationId: createOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrder'
+      responses:
+        '201':
+          description: Successfully created a new order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: "Could not create order, please check all required fields are correct."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+
+  /api/orders/{id}:
+    get:
+      tags:
+        - orders
+      summary: Get order by ID
+      description: Get a specific order by their ID
+      operationId: getOrderById
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the order to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: "No order with that ID was found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+    put:
+      tags:
+        - orders
+      summary: Update order
+      description: Update an existing order
+      operationId: updateOrder
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the order to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrder'
+      responses:
+        '201':
+          description: Successfully updated the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: "Could not update the order, please check all required fields are correct."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: "No order with that ID was found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+    delete:
+      tags:
+        - orders
+      summary: Delete order
+      description: Delete a order by ID
+      operationId: deleteOrder
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the order to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully deleted the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: "No order with that ID was found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+
+  /api/public/products:
+    get:
+      tags:
+        - products
+      summary: Get all product
+      description: Get all products in the system
+      operationId: getAllPublicProducts
+      responses:
+        '200':
+          description: Successfully retrieved all products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllProducts'
+
+  /api/public/products/{id}:
+    get:
+      tags:
+        - products
+      summary: Get product by ID
+      description: Get a specific product by their ID
+      operationId: getPublicProductById
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the product to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved the product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: "No product with that ID was found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+
+  /api/products:
+    get:
+      tags:
+        - products
+      summary: Get all product
+      description: Get all products in the system
+      operationId: getAllProducts
+      responses:
+        '200':
+          description: Successfully retrieved all products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllProducts'
+    post:
+      tags:
+        - products
+      summary: Create product
+      description: Create a new product
+      operationId: createProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProduct'
+      responses:
+        '201':
+          description: Successfully created a new product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: "Could not create product, please check all required fields are correct."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+
+  /api/products/{id}:
+    get:
+      tags:
+        - products
+      summary: Get product by ID
+      description: Get a specific product by their ID
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the product to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved the product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: "No product with that ID was found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+    put:
+      tags:
+        - products
+      summary: Update product
+      description: Update an existing product
+      operationId: updateProduct
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the product to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProduct'
+      responses:
+        '201':
+          description: Successfully updated the product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: "Could not update the product, please check all required fields are correct."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: "No product with that ID was found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+    delete:
+      tags:
+        - products
+      summary: Delete product
+      description: Delete a product by ID
+      operationId: deleteProduct
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the product to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully deleted the product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: "No product with that ID was found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+
+components:
+  schemas:
+    CreateCustomer:
+      type: object
+      required: [name, email]
+      properties:
+        name:
+          type: string
+          example: "John"
+        email:
+          type: string
+          example: "john.doe@university.edu"
+
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "John"
+        email:
+          type: string
+          example: "john.doe@university.edu"
+        orderList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+
+
+    AllCustomers:
+      type: array
+      items:
+        $ref: '#/components/schemas/Customer'
+
+    CreateOrder:
+      type: object
+      required: [customer_id, order_items]
+      properties:
+        customer_id:
+          type: integer
+          format: int64
+          example: 1
+        order_items:
+          type: array
+          items:
+            $ref: '#components/schemas/CreateOrderItem'
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-09-01T10:15:00.000Z"
+        total_amount:
+          type: number
+          format: float
+          example: 3.2
+        customer:
+          $ref: '#/components/schemas/Customer'
+        productList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+
+    CreateOrderItems:
+      required: [customer_id, order_items]
+      properties:
+        product_id:
+          type: integer
+          format: int64
+        product_id:
+          type: integer
+          format: int64
+    AllOrders:
+      type: array
+      items:
+        $ref: '#/components/schemas/Order'
+
+    CreateProduct:
+      type: object
+      required: [name, price]
+      properties:
+        name:
+          type: string
+          example: "John"
+        price:
+          type: number
+          format: float
+          example: 3.2
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "John"
+        price:
+          type: float
+          example: 3.2
+
+    AllProducts:
+      type: array
+      items:
+        $ref: '#/components/schemas/Product'
+
+    Error400:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "bad request"
+
+    Error404:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "not found"
