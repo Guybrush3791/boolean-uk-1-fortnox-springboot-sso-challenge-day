@@ -4,6 +4,7 @@ import org.booleanuk.app.model.dto.ResponseDto;
 import org.booleanuk.app.model.exception.ProductNotFoundException;
 import org.booleanuk.app.model.service.ProductService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,12 +23,14 @@ public class ProductPublicController {
 
     // GET /api/public/products
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<List<ResponseDto.ProductDto>> getAllProducts() {
         return ResponseEntity.ok(productService.getAll());
     }
 
     // GET /api/public/products/{id}
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> getProductById(@PathVariable int id) {
         try {
             ResponseDto.ProductDto product = productService.getById(id);

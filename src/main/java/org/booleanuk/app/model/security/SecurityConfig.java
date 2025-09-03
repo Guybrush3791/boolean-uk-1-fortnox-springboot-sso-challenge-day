@@ -2,6 +2,7 @@ package org.booleanuk.app.model.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -23,9 +25,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()				// [!note] Everything else must be authenticated
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> {
-                            // You can configure JwtAuthenticationConverter or other JWT options here if needed
-                        })
+                        .jwt(jwt -> jwt
+                             .jwtAuthenticationConverter(KeycloakRealmRoleConverter.jwtAuthenticationConverter())
+                        )
                 )
                 .build();
     }
