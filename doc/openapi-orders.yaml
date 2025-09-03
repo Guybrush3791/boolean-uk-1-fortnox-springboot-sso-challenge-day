@@ -1,0 +1,242 @@
+openapi: 3.1.0
+
+info:
+  title: Order API
+  description: API for managing orders
+  version: 1.0.0
+  contact:
+    name: Shop Management System
+
+servers:
+  - url: http://localhost:4000
+
+tags:
+  - name: orders
+  - name: analytics
+
+paths:
+  /api/public/orders:
+    post:
+      tags: [orders]
+      summary: Create order (public)
+      operationId: createOrderPublic
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrder"
+      responses:
+        "201":
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error400"
+
+  /api/public/orders/{id}:
+    put:
+      tags: [orders]
+      summary: Update order (public)
+      operationId: updateOrderPublic
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrder"
+      responses:
+        "200":
+          description: Updated order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error404"
+
+  /api/orders:
+    get:
+      tags: [orders]
+      summary: Get all orders (admin)
+      operationId: getAllOrdersAdmin
+      responses:
+        "200":
+          description: Retrieved orders
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AllOrders"
+    post:
+      tags: [orders]
+      summary: Create order (admin)
+      operationId: createOrderAdmin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrder"
+      responses:
+        "201":
+          description: Created order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+  /api/orders/{id}:
+    get:
+      tags: [orders]
+      summary: Get order by ID
+      operationId: getOrderById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Retrieved order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error404"
+    put:
+      tags: [orders]
+      summary: Update order
+      operationId: updateOrderAdmin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrder"
+      responses:
+        "200":
+          description: Updated order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error404"
+    delete:
+      tags: [orders]
+      summary: Delete order
+      operationId: deleteOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Deleted order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error404"
+
+  /api/orders/ordered-value:
+    get:
+      tags: [analytics]
+      summary: Get orders by value
+      description: Orders with full value, ordered by value
+      operationId: getOrdersByValue
+      responses:
+        "200":
+          description: Orders with value
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrdersWithValue"
+
+components:
+  schemas:
+    CreateOrder:
+      type: object
+      required: [createdAt, totalAmount, customer_id]
+      properties:
+        createdAt:
+          type: string
+          format: date
+          example: "2025-09-03"
+        totalAmount:
+          type: number
+          format: float
+          example: 1225.00
+        customer_id:
+          type: integer
+          example: 1
+
+    Order:
+      type: object
+      properties:
+        id: { type: integer, example: 100 }
+        customer_id: { type: integer, example: 1 }
+        products:
+          type: array
+          items: { $ref: "#/components/schemas/Product" }
+        total_value: { type: number, format: float, example: 2999.97 }
+
+    AllOrders:
+      type: array
+      items: { $ref: "#/components/schemas/Order" }
+
+    OrdersWithValue:
+      type: array
+      items:
+        type: object
+        properties:
+          order: { $ref: "#/components/schemas/Order" }
+          total_value: { type: number, format: float, example: 250.75 }
+
+    Product:
+      type: object
+      properties:
+        id: { type: integer, example: 1 }
+        name: { type: string, example: "Laptop" }
+        price: { type: number, format: float, example: 999.99 }
+
+    Error400:
+      type: object
+      properties:
+        message: { type: string, example: "bad request" }
+
+    Error404:
+      type: object
+      properties:
+        message: { type: string, example: "not found" }
