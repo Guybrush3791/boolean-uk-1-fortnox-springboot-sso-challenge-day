@@ -8,7 +8,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:58360/sso-challenge-day
+    url: jdbc:postgresql://localhost:57838/sso-challenge-day
     username: admin
     password: admin
     max-active: 5

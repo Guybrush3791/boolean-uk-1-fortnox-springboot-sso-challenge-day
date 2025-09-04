@@ -14,8 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderRequestDto {
-    private LocalDateTime createdAt;
-    private float totalAmount;
-    private Customer customer;
-    private List<Product> productList;
+    private long customer_id;
+    private List<Long> productList;
 }

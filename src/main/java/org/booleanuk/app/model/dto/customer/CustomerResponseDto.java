@@ -23,9 +23,9 @@ public class CustomerResponseDto {
         setName(customer.getName());
         setEmail(customer.getEmail());
         if (customer.getOrderList()!= null) {
-            customer.getOrderList().stream()
+            setOrderList(customer.getOrderList().stream()
                     .map(OrderSummaryDto::new)
-                    .toList();
-        };
+                    .toList());
+        }
     }
 }

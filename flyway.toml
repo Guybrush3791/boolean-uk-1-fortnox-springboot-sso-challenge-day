@@ -1,9 +1,0 @@
-[flyway]
-environment = "local"
-locations = ["filesystem:C:/Users/HHakan/IdeaProjects/boolean-uk-1-fortnox-springboot-sso-challenge-day/"]  # Path to your migration scripts
-
-[environments.local]
-url = "jdbc:postgresql://localhost:58360/sso-challenge-day"  # JDBC URL for localhost PostgreSQL
-user = "admin"
-password = "admin"
-defaultSchema = true
