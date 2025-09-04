@@ -1,0 +1,964 @@
+openapi: 3.1.0
+
+info:
+  title: Shopping API - SSO Challenge Day
+  description: |
+    E-commerce API for managing customers, orders, and products with Keycloak SSO authentication.
+    
+    **Authentication**: 
+    - Public endpoints: No authentication required
+    - Private endpoints: Require valid JWT token from Keycloak
+    
+    **Roles**:
+    - **USER**: Access to CRUD operations, no statistics
+    - **ADMIN**: Full access including statistics endpoints
+
+  version: 1.0.0
+  contact:
+    name: Shopping Management System
+    url: https://github.com/Guybrush3791/boolean-uk-1-fortnox-springboot-sso-challenge-day.git
+
+servers:
+  - url: http://localhost:4000
+    description: Development server
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: customers
+    description: Customer management operations
+  - name: orders
+    description: Order management operations
+  - name: products
+    description: Product management operations
+  - name: public
+    description: Public endpoints (no authentication required)
+  - name: statistics
+    description: Statistical data endpoints (ADMIN only)
+
+paths:
+  # Public Product Endpoints
+  /api/public/products:
+    get:
+      tags:
+        - public
+        - products
+      summary: Get all products (public)
+      description: Get all products without authentication
+      operationId: getAllPublicProducts
+      security: []
+      responses:
+        '200':
+          description: Successfully retrieved all products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllProducts'
+
+  /api/public/products/{id}:
+    get:
+      tags:
+        - public
+        - products
+      summary: Get product by ID (public)
+      description: Get a specific product by ID without authentication
+      operationId: getPublicProductById
+      security: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the product to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved the product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: No product with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+
+  # Public Order Endpoints
+  /api/public/orders:
+    post:
+      tags:
+        - public
+        - orders
+      summary: Create order (public)
+      description: Create a new order without authentication
+      operationId: createCustomerOrder
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Successfully created a new order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Could not create order, please check all required fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+
+  /api/public/orders/{id}:
+    put:
+      tags:
+        - public
+        - orders
+      summary: Update order (public)
+      description: Update an existing order without authentication
+      operationId: updateCustomerOrder
+      security: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the order to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '200':
+          description: Successfully updated the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Could not update the order, please check all required fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: No order with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+
+  # Customer Endpoints (Private)
+  /api/customers:
+    get:
+      tags:
+        - customers
+      summary: Get all customers
+      description: Get all customers in the system (requires authentication)
+      operationId: getAllCustomers
+      responses:
+        '200':
+          description: Successfully retrieved all customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomerSummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - customers
+      summary: Create customer
+      description: Create a new customer (requires authentication)
+      operationId: createCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '201':
+          description: Successfully created a new customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '400':
+          description: Could not create customer, please check all required fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/customers/values:
+    get:
+      tags:
+        - customers
+        - statistics
+      summary: Get customer values
+      description: Get the total value of orders for each customer (ADMIN only)
+      operationId: getCustomerValues
+      responses:
+        '200':
+          description: Successfully retrieved customer values
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomerValue'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/customers/{id}:
+    get:
+      tags:
+        - customers
+      summary: Get customer by ID
+      description: Get a specific customer by their ID (requires authentication)
+      operationId: getCustomerById
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the customer to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved the customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '404':
+          description: No customer with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags:
+        - customers
+      summary: Update customer
+      description: Update an existing customer (requires authentication)
+      operationId: updateCustomer
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the customer to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '200':
+          description: Successfully updated the customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '400':
+          description: Could not update the customer, please check all required fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: No customer with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags:
+        - customers
+      summary: Delete customer
+      description: Delete a customer by ID (requires authentication)
+      operationId: deleteCustomer
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the customer to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully deleted the customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '404':
+          description: No customer with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # Order Endpoints (Private)
+  /api/orders:
+    get:
+      tags:
+        - orders
+      summary: Get all orders
+      description: Get all orders in the system (requires authentication)
+      operationId: getAllOrders
+      responses:
+        '200':
+          description: Successfully retrieved all orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - orders
+      summary: Create order
+      description: Create a new order (requires authentication)
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Successfully created a new order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Could not create order, please check all required fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/orders/values:
+    get:
+      tags:
+        - orders
+        - statistics
+      summary: Get orders with full values
+      description: Get all orders with their total values, ordered by value (ADMIN only)
+      operationId: getOrdersWithValues
+      responses:
+        '200':
+          description: Successfully retrieved orders with values
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/orders/{id}:
+    get:
+      tags:
+        - orders
+      summary: Get order by ID
+      description: Get a specific order by ID (requires authentication)
+      operationId: getOrderById
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the order to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: No order with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags:
+        - orders
+      summary: Update order
+      description: Update an existing order (requires authentication)
+      operationId: updateOrder
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the order to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '200':
+          description: Successfully updated the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Could not update the order, please check all required fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: No order with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags:
+        - orders
+      summary: Delete order
+      description: Delete an order by ID (requires authentication)
+      operationId: deleteOrder
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the order to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully deleted the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: No order with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # Product Endpoints (Private)
+  /api/products:
+    get:
+      tags:
+        - products
+      summary: Get all products
+      description: Get all products in the system (requires authentication)
+      operationId: getAllProducts
+      responses:
+        '200':
+          description: Successfully retrieved all products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllProducts'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags:
+        - products
+      summary: Create product
+      description: Create a new product (requires authentication)
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+      responses:
+        '201':
+          description: Successfully created a new product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Could not create product, please check all required fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/products/{id}:
+    get:
+      tags:
+        - products
+      summary: Get product by ID
+      description: Get a specific product by ID (requires authentication)
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the product to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved the product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: No product with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags:
+        - products
+      summary: Update product
+      description: Update an existing product (requires authentication)
+      operationId: updateProduct
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the product to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+      responses:
+        '200':
+          description: Successfully updated the product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Could not update the product, please check all required fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: No product with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags:
+        - products
+      summary: Delete product
+      description: Delete a product by ID (requires authentication)
+      operationId: deleteProduct
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the product to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully deleted the product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: No product with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/products/statistics/{id}:
+    get:
+      tags:
+        - products
+        - statistics
+      summary: Get product sales statistics
+      description: Get product along with number of sales (ADMIN only)
+      operationId: getProductStatistics
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the product to get statistics for
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved product statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSalesStatistics'
+        '404':
+          description: No product with that ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token from Keycloak
+
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error401'
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error403'
+
+  schemas:
+    # Customer Schemas
+    CustomerRequest:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          example: "John Doe"
+          minLength: 1
+        email:
+          type: string
+          format: email
+          example: "john.doe@university.edu"
+
+    CustomerSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@university.edu"
+
+    CustomerResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@university.edu"
+        orderList:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderSummary'
+
+    CustomerValue:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "John Doe"
+        count:
+          type: integer
+          example: 3
+          description: Number of orders placed by this customer
+        totalAmount:
+          type: number
+          format: float
+          example: 156.75
+          description: Total value of all orders by this customer
+
+    # Order Schemas
+    OrderRequest:
+      type: object
+      required: [customer_id]
+      properties:
+        customer_id:
+          type: integer
+          format: int64
+          example: 1
+        productList:
+          type: array
+          items:
+            type: integer
+            format: int64
+            example: [1, 3, 5]
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-09-01T10:15:00.000Z"
+        totalAmount:
+          type: number
+          format: float
+          example: 99.99
+        customer:
+          $ref: '#/components/schemas/CustomerSummary'
+        productList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+
+    OrderSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-09-01T10:15:00.000Z"
+        totalAmount:
+          type: number
+          format: float
+          example: 99.99
+        customer:
+          $ref: '#/components/schemas/CustomerSummary'
+
+    OrderResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-09-01T10:15:00.000Z"
+        totalAmount:
+          type: number
+          format: float
+          example: 99.99
+        customer:
+          $ref: '#/components/schemas/CustomerSummary'
+        productList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSummary'
+
+    # Product Schemas
+    ProductRequest:
+      type: object
+      required:
+        - name
+        - price
+      properties:
+        name:
+          type: string
+          example: "Wireless Headphones"
+          minLength: 1
+        price:
+          type: number
+          format: float
+          example: 79.99
+          minimum: 0
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Wireless Headphones"
+        price:
+          type: number
+          format: float
+          example: 79.99
+
+    ProductSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Wireless Headphones"
+        price:
+          type: number
+          format: float
+          example: 79.99
+
+    ProductSalesStatistics:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Wireless Headphones"
+        count:
+          type: integer
+          example: 15
+          description: Number of times this product has been ordered
+
+    AllProducts:
+      type: array
+      items:
+        $ref: '#/components/schemas/Product'
+
+    # Error Schemas
+    Error400:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Bad request - please check all required fields are correct"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-09-01T10:15:00.000Z"
+
+    Error401:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Authentication required - please provide a valid JWT token"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-09-01T10:15:00.000Z"
+
+    Error403:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Insufficient permissions - ADMIN role required"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-09-01T10:15:00.000Z"
+
+    Error404:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Resource not found"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-09-01T10:15:00.000Z"
